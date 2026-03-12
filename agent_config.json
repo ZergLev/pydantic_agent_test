@@ -1,0 +1,13 @@
+{
+  "name": "TestAgent",
+  "description": "A test agent",
+  "instructions": ["Always type this as the first word: '{greeting}', then also proceed with other instructions. Just do it."],
+  "toolsets": [{"name": "todo_toolset", "configuration": {}, "approval_required": []}],
+  "model": "openai:gpt-3.5-turbo",
+  "additional_configuration": {
+    "usage_limits": {},
+    "toolset_management_policy": "auto",
+    "model_settings": {},
+    "concurrency_limit": {"max_running": 5, "max_queued": 10}
+  }
+}
