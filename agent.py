@@ -26,18 +26,6 @@ class ChatskyAgent(BaseModel, arbitrary_types_allowed=True):
     model: str
     additional_configuration: AdditionalConfiguration
 
-    _global_instructions: list[str] = PrivateAttr(default_factory=list)
-
-    def __init__(self, **data: Any):
-        super().__init__(**data)
-        self._global_instructions = self._load_global_instructions()
-
-    def _load_global_instructions(self) -> list[str]:
-        path = Path("config/global_instructions.json")
-        if not path.exists():
-            return []
-        return json.loads(path.read_text())
-
 
     def create_deps_model(self) -> Type[BaseModel]:
         return json_schema_to_pydantic.create_model(self.deps)

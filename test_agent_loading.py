@@ -33,6 +33,7 @@ async def test_chatsky_agent_run():
     agent_data["deps"] = MyDepsModel.model_json_schema()
     agent_data["structured_output_type"] = StrResult.model_json_schema()
     agent = ChatskyAgent(**agent_data)
+    print(agent_data["deps"])
 
     # Create runtime agent
     runtime_agent = agent.create_agent()
