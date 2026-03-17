@@ -7,11 +7,10 @@ from pydantic import BaseModel, Field, PrivateAttr
 from pydantic_ai import Agent, RunContext, AbstractToolset
 
 from .models import ChatskyToolset, AdditionalConfiguration
-from .todo_toolset import some_toolset
+from .todo_toolset import TodoToolset
 
-# TODO: Add the toolset to tests
 available_toolsets: dict[str, Any] = {
-    "todo_toolset": some_toolset
+    "todo_toolset": TodoToolset
 }
 
 logger = logging.getLogger(__name__)
@@ -40,7 +39,13 @@ class ChatskyAgent(BaseModel, arbitrary_types_allowed=True):
         for ts in self.toolsets:
             if ts.name not in available_toolsets:
                 raise ValueError(f"Unknown toolset: {ts.name}")
-            toolset = available_toolsets[ts.name]
+
+            toolset_class = available_toolsets[ts.name]
+            toolset = toolset_class(
+                config=ts.configuration,
+                approval_required=ts.approval_required
+            )
+
             instances.append(toolset)
         return instances
 
@@ -74,7 +79,7 @@ class ChatskyAgent(BaseModel, arbitrary_types_allowed=True):
                 if "default" in prop
             }
 
-            for instr in self._global_instructions + self.instructions:
+            for instr in self.instructions:
 
                 # Start with schema defaults
                 context = dict(schema_defaults)
