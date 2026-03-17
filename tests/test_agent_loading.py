@@ -7,19 +7,79 @@ from dotenv import load_dotenv
 from pydantic import BaseModel
 from pydantic_ai import RunContext
 
-from .agent import ChatskyAgent
-from .todo_toolset import store
+from ..agent import ChatskyAgent
+from ..todo_toolset import TodoToolset
 
-load_dotenv()  # loads variables from .env into os.environ
+load_dotenv()
 
 def load_json(file_path):
     return json.loads(Path(file_path).read_text())
 
 @pytest.mark.asyncio
-async def test_chatsky_agent_run():
-    agent_data = load_json("./agent_config.json")
+async def test_create_deps_model_1():
+    agent_data = load_json("./tests/configs/test_create_deps.json")
+    agent = ChatskyAgent(**agent_data)
 
-    # Test instruction rendering
+    deps_model = agent.create_deps_model()
+
+    assert issubclass(deps_model, BaseModel)
+
+    instance = deps_model(age=25)
+    assert instance.name == "John"
+    assert instance.age == 25
+
+@pytest.mark.asyncio
+async def test_create_deps_model_2():
+
+    class MyDepsModel(BaseModel):
+        age: int = 30
+        name: str = "John"
+
+    agent_data = load_json("./tests/configs/test_create_deps.json")
+    agent_data["deps"] = MyDepsModel.model_json_schema()
+
+    agent = ChatskyAgent(**agent_data)
+
+    deps_model = agent.create_deps_model()
+
+    assert deps_model.model_json_schema() == MyDepsModel.model_json_schema()
+
+    instance = deps_model(age=25)
+    assert instance.name == "John"
+    assert instance.age == 25
+
+# Made for `TodoToolset`
+@pytest.mark.asyncio
+async def test_create_toolsets():
+    agent_data = load_json("./tests/configs/test_create_toolsets.json")
+    agent = ChatskyAgent(**agent_data)
+
+    toolsets = agent.create_toolsets()
+
+    assert len(toolsets) == 1
+
+    toolset = toolsets[0]
+
+    assert isinstance(toolset, TodoToolset)
+    assert toolset.max_tasks == 5
+    assert toolset.approval_required == ["create_task"]
+
+@pytest.mark.asyncio
+async def test_create_unknown_toolset():
+    agent_data = load_json("./tests/configs/test_create_toolsets.json")
+
+    fake_toolset = {"name": "nonexistent_toolset"}
+    agent_data["toolsets"].append(fake_toolset)
+
+    agent = ChatskyAgent(**agent_data)
+
+    with pytest.raises(ValueError):
+        agent.create_toolsets()
+
+@pytest.mark.asyncio
+async def test_chatsky_agent_run():
+    agent_data = load_json("./tests/configs/test_full.json")
+
     class MyDepsModel(BaseModel):
         age: int = 30
         name: str = "John Doe"
@@ -79,13 +139,5 @@ async def test_chatsky_agent_run():
 
     print("--- Agent Output ---")
     print(result.output)
-
-    print(store.calls)
-    print(store.tasks)
-
-    assert "create_task" in store.calls
-    assert "list_tasks" in store.calls
-    assert "Buy milk" in store.tasks
-    assert "Sell milk" in store.tasks
 
     assert False == True

@@ -3,13 +3,14 @@ from pydantic_ai import FunctionToolset, Tool
 class TodoToolset(FunctionToolset):
 
     def __init__(self, config: dict, approval_required: list[str]):
-        self.max_tasks = config.get("max_tasks", 10)
+        self.max_tasks = config.get("max_tasks", 2)
         self.approval_required = approval_required
 
         self._tasks: list[str] = []
 
         super().__init__(tools=self._build_tools())
 
+    # TODO: Think of a better way to organize this part
     def _build_tools(self) -> list[Tool]:
         return [
             Tool(self.create_task, requires_approval="create_task" in self.approval_required),

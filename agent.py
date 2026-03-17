@@ -65,32 +65,20 @@ class ChatskyAgent(BaseModel, arbitrary_types_allowed=True):
             # usage_limits=self.additional_configuration.usage_limits,
             max_concurrency=self.additional_configuration.concurrency_limit,
         )
-
         @agent.instructions
-        async def render_instruction(ctx: RunContext[deps_model]):
+        async def render_instruction(ctx: RunContext[deps_model]) -> str:
 
-            rendered: list[str] = []
+            deps_values = ctx.deps.model_dump()
 
-            # Get schema-defined placeholders
-            schema_properties = self.deps.get("properties", {})
-            schema_defaults = {
-                name: prop.get("default")
-                for name, prop in schema_properties.items()
-                if "default" in prop
-            }
+            # Skip undefined placeholders with no defaults
+            context = {k: v for k, v in deps_values.items() if v is not None}
 
+            rendered = []
             for instr in self.instructions:
-
-                # Start with schema defaults
-                context = dict(schema_defaults)
-
-                # Override with runtime deps
-                context.update(vars(ctx.deps))
-
                 try:
                     rendered.append(instr.format(**context))
                 except KeyError as e:
-                    logger.error(
+                    logger.debug(
                         f"Skipping instruction '{instr}' - placeholder not found: {e}"
                     )
                     continue

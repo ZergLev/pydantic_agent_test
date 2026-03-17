@@ -1,0 +1,24 @@
+{
+  "name": "BasicAgent",
+  "description": "Test basic instructions",
+  "instructions": [
+    "Hello {name}, welcome!",
+    "Your age is {age}."
+  ],
+  "deps": {
+    "type": "object",
+    "properties": {
+      "name": {"type": "string", "default": "John"},
+      "age": {"type": "integer", "default": 30}
+    },
+    "required": ["name", "age"]
+  },
+  "model": "test_model",
+  "toolsets": [],
+  "additional_configuration": {
+    "usage_limits": {},
+    "toolset_management_policy": "auto",
+    "model_settings": {},
+    "concurrency_limit": {"max_running": 5, "max_queued": 10}
+  }
+}

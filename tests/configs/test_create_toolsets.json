@@ -1,0 +1,20 @@
+{
+    "name": "TestAgent",
+    "instructions": [],
+    "deps": {"type": "object", "properties": {}},
+    "structured_output_type": null,
+    "model": "test_model",
+    "toolsets": [
+        {
+            "name": "todo_toolset",
+            "configuration": {"max_tasks": 5},
+            "approval_required": ["create_task"]
+        }
+    ],
+    "additional_configuration": {
+        "usage_limits": {},
+        "toolset_management_policy": "auto",
+        "model_settings": {},
+        "concurrency_limit": {"max_running": 5, "max_queued": 10}
+    }
+}
