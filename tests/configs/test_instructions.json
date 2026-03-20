@@ -1,0 +1,33 @@
+{
+    "name": "TestAgent",
+    "instructions": [
+        "Hello {name}",
+        "Your job is {job}",
+        "You are {age} years old",
+        "Country: {country}"
+    ],
+    "toolsets": [],
+    "structured_output_type": {
+        "type": "object",
+        "properties": {
+            "response": {
+            "type": "string"
+            }
+        },
+        "required": ["response"]
+    },
+    "deps": {
+        "type": "object",
+        "properties": {
+            "name": { "type": "string" },
+            "age": { "type": "integer" }
+        }
+    },
+    "model": "openai:gpt-3.5-turbo",
+    "additional_configuration": {
+        "usage_limits": {},
+        "toolset_management_policy": "auto",
+        "model_settings": {},
+        "concurrency_limit": {"max_running": 5, "max_queued": 10}
+    }
+}

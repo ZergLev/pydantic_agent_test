@@ -1,0 +1,29 @@
+{
+    "name": "TestAgent",
+    "instructions": [],
+    "toolsets": [],
+    "structured_output_type": {
+        "type": "object",
+        "properties": {
+            "output": {
+            "type": "string",
+            "default": "hello"
+            },
+            "score": {
+            "type": "integer",
+            "default": 0
+            }
+        }
+    },
+    "deps": {
+    "type": "object",
+    "properties": {}
+    },
+    "model": "test_model",
+    "additional_configuration": {
+        "usage_limits": {},
+        "toolset_management_policy": "auto",
+        "model_settings": {},
+        "concurrency_limit": {"max_running": 5, "max_queued": 10}
+    }
+}

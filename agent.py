@@ -22,7 +22,7 @@ class ChatskyAgent(BaseModel, arbitrary_types_allowed=True):
     toolsets: list[ChatskyToolset] = Field(default_factory=list)
     structured_output_type: dict | None = None  # JSON schema
     deps: dict  # JSON schema
-    model: str
+    model: str | Any
     additional_configuration: AdditionalConfiguration
 
 
